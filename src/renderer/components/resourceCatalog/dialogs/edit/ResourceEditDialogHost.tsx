@@ -113,9 +113,11 @@ function AgentEditDialogHost({
   const modelFilter = useAgentModelFilter(agent?.type)
   // A deep link (`initialTab`) asks for a specific setting; any other open shows the profile first.
   const [view, setView] = useState<'profile' | 'settings'>(target.initialTab ? 'settings' : 'profile')
+  const [openedFromProfile, setOpenedFromProfile] = useState(false)
 
   useEffect(() => {
     setView(target.initialTab ? 'settings' : 'profile')
+    setOpenedFromProfile(false)
   }, [target])
 
   useEffect(() => {
@@ -131,7 +133,10 @@ function AgentEditDialogHost({
         open={open}
         agent={agent ?? null}
         onOpenChange={onOpenChange}
-        onOpenSettings={() => setView('settings')}
+        onOpenSettings={() => {
+          setOpenedFromProfile(true)
+          setView('settings')
+        }}
       />
     )
   }
@@ -143,6 +148,7 @@ function AgentEditDialogHost({
       onOpenChange={onOpenChange}
       modelFilter={modelFilter}
       initialTab={target.initialTab}
+      onBack={openedFromProfile ? () => setView('profile') : undefined}
     />
   )
 }
